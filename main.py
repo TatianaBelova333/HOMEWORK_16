@@ -113,7 +113,7 @@ def get_update_delete_user_by_id(user_id):
 
 
 @app.route('/orders', methods=['GET', 'POST'])
-def get_all_orders():
+def orders_index():
     if request.method == 'GET':
         customer = db.aliased(User)
         executor = db.aliased(User)
@@ -126,10 +126,7 @@ def get_all_orders():
             (customer.first_name + ' ' + customer.last_name).label('customer_full_name'),
             (executor.first_name + ' ' + executor.last_name).label('executor_full_name')
         ).join(customer, Order.customer_id == customer.id).join(executor, executor.id == Order.executor_id).all()
-        result = []
-        for order in all_orders:
-            one_order = order._asdict()
-            result.append(one_order)
+        result = [order._asdict() for order in all_orders]
         return jsonify(result)
     elif request.method == 'POST':
         data = request.get_json()
@@ -149,7 +146,7 @@ def get_all_orders():
 
 
 @app.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
-def get_order_by_id(order_id):
+def get_update_delete_order_by_id(order_id):
     if request.method == 'GET':
         customer = db.aliased(User)
         executor = db.aliased(User)
